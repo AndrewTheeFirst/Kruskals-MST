@@ -3,22 +3,27 @@
 #include <unordered_map>
 #include "disjointset.h"
 
-void DisjointSet::Make_Set(int vertex){
+DisjointSet::DisjointSet(size_t size){
+    parents.reserve(size);
+    ranks.reserve(size);
+}
+
+void DisjointSet::Make_Set(size_t vertex){
     parents.push_back(vertex);
     ranks.push_back(vertex);
 };
 
-int DisjointSet::Find(int vertex){ // uses path compression
+size_t DisjointSet::Find(size_t vertex){ // uses path compression
     if (parents[vertex] != vertex){
         parents[vertex] = Find(parents[vertex]);
     }
     return parents[vertex];
 }
 
-void DisjointSet::Union(int vertex_1, int vertex_2){ // uses union by rank
-    int parent_1 = Find(vertex_1),
+void DisjointSet::Union(size_t vertex_1, size_t vertex_2){ // uses union by rank
+    size_t parent_1 = Find(vertex_1),
         parent_2 = Find(vertex_2);
-    int rank_1 = Rank(parent_1),
+    size_t rank_1 = Rank(parent_1),
         rank_2 = Rank(parent_2);
 
     if (rank_1 < rank_2){
@@ -33,6 +38,6 @@ void DisjointSet::Union(int vertex_1, int vertex_2){ // uses union by rank
     }
 }
 
-int DisjointSet::Rank(int vertex){
+size_t DisjointSet::Rank(size_t vertex){
     return ranks[vertex];
 }

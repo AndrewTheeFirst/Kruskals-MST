@@ -5,19 +5,18 @@
 class DisjointSet{
 
 private:
+    std::vector<size_t> parents;
 
-    std::vector<int> parents;
+    std::vector<size_t> ranks;
 
-    std::vector<int> ranks;
-
-    int Rank(int vertex);
+    size_t Rank(size_t vertex);
 
 public:
-    void Make_Set(int vertex);
+    DisjointSet(size_t size);
 
-    int Find(int vertex);
+    void Make_Set(size_t vertex);
 
-    void Union(int vertex_1, int vertex_2);
-    
+    size_t Find(size_t vertex);
 
+    void Union(size_t vertex_1, size_t vertex_2);
 };
