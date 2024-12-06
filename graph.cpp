@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
+#include <iomanip>
 
 #include <iostream>
 
@@ -105,13 +106,40 @@ Graph Graph::kruskal(){
 }
 
 std::ostream& operator<<(std::ostream& os, const Graph& g){
+    size_t num_cities = g.adjacency_matrix.size();
+    const std::streamsize SPACE = 12;
+    std::vector<int> weights;
     int weight;
-    for (size_t index_1 = 0; index_1 < g.adjacency_matrix.size(); index_1++){
-        for (size_t index_2 = index_1 + 1; index_2 < g.adjacency_matrix[index_1].size(); index_2++){
-            weight = g.adjacency_matrix[index_1][index_2];
-            if (weight != g.NO_CONNECTION){
-                os << g.vertex_to_label_map[index_1] << " to " << g.vertex_to_label_map[index_2] << " : " << g.adjacency_matrix[index_1][index_2] << "\n";
+    std::string str_weight;
+    if (num_cities > 0){
+        std::string city;
+        os << std::setw(SPACE) << ""; // spacer for header
+        for (size_t index_1 = 0; index_1 < num_cities - 1; index_1++){ // prints the header (cities)
+            city = g.vertex_to_label_map[index_1];
+            os << std::right << std::setw(SPACE) << city + " ";
+        }
+        os << std::right << std::setw(SPACE) << g.vertex_to_label_map[num_cities - 1] + " "<< '\n'; // puts last city
+
+        os << std::setw(SPACE - 1) << ""; // spacer for header (will be resued for printing cities)
+        os << std::left << std::setfill('-') << std::setw(SPACE * num_cities) << '+' << '\n'; // fills in the dashes
+
+        for (size_t index_1 = 0; index_1 < num_cities; index_1++){
+            city = g.vertex_to_label_map[index_1];
+            os << std::right << std::setfill(' ') << std::setw(SPACE) << city + " |";
+            weights = g.adjacency_matrix[index_1];
+            if (weights.size() > 0){
+                weight = weights[0];
+                if (weight == g.NO_CONNECTION){ str_weight = "-"; }
+                else { str_weight = std::to_string(weight); }
+                os << std::right << std::setw(SPACE - 1) << str_weight + " ";
+                for (size_t weight_index = 1; weight_index < weights.size(); weight_index++){ // prints weights for the city
+                    weight = weights[weight_index];
+                    if (weight == g.NO_CONNECTION){ str_weight = "-"; }
+                    else { str_weight = std::to_string(weight); }
+                    os << std::right << std::setw(SPACE) << str_weight + " ";
+                }
             }
+            os << "\n";
         }
     }
     return os;
