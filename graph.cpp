@@ -70,40 +70,48 @@ int Graph::weight() const {
 }
 
 int Graph::breadth_first_path_weight(const std::string& begin, const std::string& end){
-    size_t start = this->label_to_vertex_map[begin];
-    size_t dest = this->label_to_vertex_map[end];
 
-    size_t num_cities = this->size();
-    std::vector<size_t> path;
-    size_t city;
-    int weight = 0;
-    std::vector<bool> visited(num_cities, false); // initializes an array with size 'num_cities' to all zeros
+    int weight = NO_CONNECTION;
+    
+    if (this->label_to_vertex_map.find(begin) != this->label_to_vertex_map.end()
+    && this->label_to_vertex_map.find(end) != this->label_to_vertex_map.end()){
 
-    visited[start] = 1;
-    bool done = false;
-    std::queue<size_t> queue;
-    queue.push(start);
+        size_t start = this->label_to_vertex_map[begin];
+        size_t dest = this->label_to_vertex_map[end];
 
-    while(!queue.empty() && !done){
-        city = queue.back(); queue.pop();
-        path.push_back(city);
-        for (size_t _city = 0; _city < this->adjacency_matrix[city].size(); _city++){
-            if (this->adjacency_matrix[city][_city] != NO_CONNECTION && !visited[_city]){
-                visited[_city] = true;
-                queue.push(_city);
-                if (_city == dest){
-                    done = true;
-                    path.push_back(_city);
+        size_t num_cities = this->size();
+        std::vector<size_t> path;
+        size_t city;
+        std::vector<bool> visited(num_cities, false); // initializes an array with size 'num_cities' to all zeros
+
+        visited[start] = 1;
+        bool done = false;
+        std::queue<size_t> queue;
+        queue.push(start);
+
+        while(!queue.empty() && !done){
+            city = queue.back(); queue.pop();
+            path.push_back(city);
+            for (size_t _city = 0; _city < this->adjacency_matrix[city].size(); _city++){
+                if (this->adjacency_matrix[city][_city] != NO_CONNECTION && !visited[_city]){
+                    visited[_city] = true;
+                    queue.push(_city);
+                    if (_city == dest){
+                        done = true;
+                        path.push_back(_city);
+                    }
                 }
             }
         }
-    }
 
-    if (done){ 
-        for (size_t index = 0; index < path.size() - 1; index++){
-        weight += adjacency_matrix[path[index]][path[index + 1]];
+        if (done){ 
+            weight = 0;
+            for (size_t index = 0; index < path.size() - 1; index++){
+            weight += adjacency_matrix[path[index]][path[index + 1]];
+            }
         }
-    } else { weight = NO_CONNECTION; } // if all paths were checked and dest was not found
+
+    }
     
     return weight;
 }
